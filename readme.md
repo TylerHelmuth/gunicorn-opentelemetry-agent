@@ -82,6 +82,13 @@ opentelemetry-instrument gunicorn helloworld_project.wsgi
 
 4. Press `Ctrl + C` to stop Gunicorn.
 
+## Running the app from run.sh
+
+Included is a run script that does all of the above. 
+
+```bash
+run.sh <dev|gunicorn|opentelemetry>
+```
 
 ## Deployment Notes
 
