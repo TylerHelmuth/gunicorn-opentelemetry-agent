@@ -57,15 +57,32 @@ gunicorn helloworld_project.wsgi
 
 ## Running the App with OpenTelemetry
 
-1. Run the app using Gunicorn:
+1. Install the opentelemetry agent
 
 ```bash
-gunicorn helloworld_project.wsgi
+pip install opentelemetry-distro \
+	opentelemetry-exporter-otlp
+
+opentelemetry-bootstrap -a install
 ```
 
-2. Visit http://127.0.0.1:8000/hello/ in your web browser to see the "Hello World!" message.
+2. Run the app using Gunicorn + agent:
 
-3. Press `Ctrl + C` to stop Gunicorn.
+```bash
+export OTEL_SERVICE_NAME=test-gunicorn
+export OTEL_TRACES_EXPORTER=otlp
+export OTEL_METRICS_EXPORTER=none 
+export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=$HONEYCOMB_API_KEY"
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io
+
+opentelemetry-instrument gunicorn helloworld_project.wsgi
+```
+
+3. Visit http://127.0.0.1:8000/hello/ in your web browser to see the "Hello World!" message.
+
+4. Press `Ctrl + C` to stop Gunicorn.
+
+
 ## Deployment Notes
 
 When deploying this app in a production environment, consider using a reverse proxy server (e.g., Nginx) to handle client requests and serve static files efficiently.
