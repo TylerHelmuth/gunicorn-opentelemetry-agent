@@ -68,12 +68,15 @@ opentelemetry-bootstrap -a install
 
 2. Run the app using Gunicorn + agent:
 
+Note: DJANGO_SETTINGS_MODULE environment variable may be needed for the agent to work.
+
 ```bash
 export OTEL_SERVICE_NAME=test-gunicorn
 export OTEL_TRACES_EXPORTER=otlp
 export OTEL_METRICS_EXPORTER=none 
 export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=$HONEYCOMB_API_KEY"
 export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io
+export DJANGO_SETTINGS_MODULE="helloworld_project.settings"
 
 opentelemetry-instrument gunicorn helloworld_project.wsgi
 ```

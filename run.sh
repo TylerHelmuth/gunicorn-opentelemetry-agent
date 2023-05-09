@@ -15,6 +15,7 @@ elif [ "$1" == "opentelemetry" ]; then
     export OTEL_METRICS_EXPORTER=none 
     export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=$HONEYCOMB_API_KEY"
     export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io
+    export DJANGO_SETTINGS_MODULE="helloworld_project.settings"
 
     opentelemetry-instrument gunicorn helloworld_project.wsgi
 else
