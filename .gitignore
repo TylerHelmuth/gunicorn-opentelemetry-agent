@@ -104,3 +104,12 @@ local_settings.py
 
 .env
 db.sqlite3
+
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
