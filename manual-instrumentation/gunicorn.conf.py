@@ -1,3 +1,5 @@
+import json
+
 from opentelemetry.sdk.resources import Resource
 
 import logging
@@ -10,6 +12,9 @@ from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+from pythonjsonlogger import jsonlogger
+
 
 bind = "127.0.0.1:8000"
 
@@ -43,5 +48,32 @@ def post_fork(server, worker):
         OTLPLogExporter()
     )
     logger_provider.add_log_record_processor(log_processor)
-    handler = LoggingHandler(logger_provider=logger_provider)
+    handler = LoggingHandler(level=logging.INFO, logger_provider=logger_provider)
+    handler.setFormatter(JsonFormatter())
+    handler.addFilter(AddAttributeFilter())
     logging.getLogger().addHandler(handler)
+    logging.getLogger().setLevel(logging.INFO)
+
+
+
+class JsonFormatter(jsonlogger.JsonFormatter):
+    def __init__(self, *args, **kwargs):
+        print("creating JsonFormatter")
+        self._log_type = kwargs.pop("log_type", "django_log_v1")
+        super().__init__(*args, **kwargs)
+
+    def add_fields(self, log_record, record, message_dict):
+        print("add_fields")
+        super().add_fields(log_record, record, message_dict)
+        log_record["test"] = "pass"
+
+    def format(self, record) -> str:
+        print("format")
+        setattr(record, "attr1", "value1")
+        str = super().format(record)
+        return str
+
+class AddAttributeFilter(logging.Filter):
+    def filter(self, record):
+        setattr(record, "attr2", "value2")
+        return True
